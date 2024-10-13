@@ -9,82 +9,84 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var bluetoothModule = Bluetooth_module()
-    @State private var didTap:Bool = false
+    @State private var didTap: Bool = false
     var lock = locking_module()
     var Transmitter = transmitter()
     
     var body: some View {
-        ZStack{
+        ZStack {
+            // Background color to fill the entire screen
             Color(hex: "#FAFAFA")
-                .edgesIgnoringSafeArea(.all)
+                .edgesIgnoringSafeArea(.all) // Ensure the color fills the safe areas too
             
-            Text("NoTrust - Gadget")
-                .font(.title)
-                .foregroundColor(.black)
-    //            .frame(maxWidth: 250, maxHeight: 100, alignment: .center)
-    //            .position(x: 200, y: -120)
-                .padding(.top, -370)
-            
-            HStack{
-                circleIconView(iconName: "laptop-2", label: "Device:", xPos: 100, yPos: -50)
-                circleIconView(iconName: "signal1", label: "RSSI:", xPos: 100, yPos: -50)
-            }
-            .padding(.top, 220)
-            
-            
-            Text("Controls")
-                .font(.system(size: 20))
-    //            .fontWeight(.bold)
-                .padding(.top, -20)
-            
-            
-            VStack{
-                HStack(){
+            VStack {
+                // Title
+                Text("NoTrust - Gadget")
+                    .font(.title)
+                    .foregroundColor(.black)
+                    .padding(.top, 50)
+                
+                // Device and RSSI Info
+                HStack {
+                    circleIconView(iconName: "laptop-2", label: "Device:", xPos: 100, yPos: 50)
+                    circleIconView(iconName: "signal1", label: "RSSI:", xPos: 100, yPos: 50)
+                }
+                .padding(.top, 50)
+                
+                // Controls Header
+                Text("Controls")
+                    .font(.system(size: 20))
+                    .foregroundColor(.black)
+                    .padding(.top, 50)
+                
+                // Controls Buttons
+                HStack {
                     if !bluetoothModule.macConnected {
-                        controlButtonView(iconName: "connected3", label: "Connect Device"){
+                        controlButtonView(iconName: "connected3", label: "Connect Device") {
                             bluetoothModule.startScanning()
                         }
-                            .position(x: 100, y: 260)
-                               
+                        .position(x: 100, y: 100)
                     } else {
                         controlButtonView(iconName: "connected3", label: "Disconnect Device") {
                             bluetoothModule.disconnect()
                         }
-                            .position(x: 100, y: 260)
+                        .position(x: 100, y: 100)
                     }
                     
                     if didTap {
-                        controlButtonView(iconName: "unnamed.webp", label: "Autolock: OFF"){
-                            Transmitter.sendCommand("AUTOLOCK ON")
-                        }
-                            .position(x: 100, y: 260)
-                            
-                    } else{
-                        controlButtonView(iconName: "unnamed.webp", label: "Autolock: OFF") {
+                        controlButtonView(iconName: "unnamed.webp", label: "Autolock: ON") {
                             Transmitter.sendCommand("AUTOLOCK OFF")
+                            didTap = false
                         }
-                        .position(x: 100, y: 260)
+                        .position(x: 100, y: 100)
+                    } else {
+                        controlButtonView(iconName: "unnamed.webp", label: "Autolock: OFF") {
+                            Transmitter.sendCommand("AUTOLOCK ON")
+                            didTap = true
+                        }
+                        .position(x: 100, y: 100)
                     }
                 }
-                .padding(.top, 250)
-        }
-            VStack{
-                HStack{
-                    controlButtonView(iconName: "locked-icon", label: "Lock Device"){
+                .padding(.top, 0)
+                
+                // Lock and Unlock Buttons
+                HStack {
+                    controlButtonView(iconName: "locked-icon", label: "Lock Device") {
                         Transmitter.sendCommand("LOCK")
                     }
-                        .position(x: 100, y: 100)
-                    
-                    controlButtonView(iconName: "unlock-icon", label: "Unlock Device"){
+                    .position(x: 100, y: 100)
+                    controlButtonView(iconName: "unlock-icon", label: "Unlock Device") {
                         Transmitter.sendCommand("UNLOCK")
                     }
-                        .position(x: 100, y: 100)
+                    .position(x: 100, y: 100)
                 }
-                .padding(.top, 580)
-                }
+                .padding(.top, 0)
+                
+                Spacer() // Push content upwards
             }
         }
     }
+}
 
 struct circleIconView: View {
     var iconName: String
@@ -109,7 +111,7 @@ struct circleIconView: View {
             Text(label)
                 .font(.footnote)
                 .foregroundColor(.black)
-                .position(x: xPos, y: yPos-200)
+                .position(x: xPos, y: yPos)
         }
     }
 }
